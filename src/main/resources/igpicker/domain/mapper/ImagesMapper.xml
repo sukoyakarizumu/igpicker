@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="igpicker.domain.mapper.ImagesMapper">
+
+	<resultMap id="ResultMap_ImageInfo" type="ImageInfo">
+		<result column="id"         jdbcType="INTEGER"       property="id" />
+		<result column="title"      jdbcType="VARCHAR"       property="title" />
+		<result column="comment"    jdbcType="VARCHAR"       property="comment" />
+		<result column="ownerId"    jdbcType="INTEGER"       property="ownerId" />
+		<result column="ownerName"  jdbcType="VARCHAR"       property="ownerName" />
+		<result column="thumbnail"  jdbcType="VARCHAR"       property="thumbnail" />
+		<result column="createdAt"  jdbcType="TIMESTAMP"     property="createdAt" />
+	</resultMap>
+
+	<resultMap id="ResultMap_ImageData" type="ImageData">
+		<result column="id"         jdbcType="INTEGER"       property="id" />
+		<result column="mime"       jdbcType="VARCHAR"       property="mime" />
+		<result column="width"      jdbcType="INTEGER"       property="width" />
+		<result column="height"     jdbcType="INTEGER"       property="height" />
+		<result column="filename"   jdbcType="VARCHAR"       property="filename" />
+		<result column="data"       jdbcType="LONGVARBINARY" property="data" />
+	</resultMap>
+
+	<select id="countAll" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			images
+	</select>
+
+	<delete id="deleteImage">
+		DELETE FROM images WHERE id = #{id}
+	</delete>
+
+	<select id="selectImageInfo" resultMap="ResultMap_ImageInfo" parameterType="int">
+		SELECT
+			images.id,
+			images.title,
+			images.comment,
+			images.ownerId,
+			users.username,
+			images.thumbnail,
+			images.createdAt
+		FROM
+			images INNER JOIN users ON images.ownerId = users.id
+		WHERE
+			images.id = #{id}
+		ORDER BY
+			id DESC
+	</select>
+
+	<select id="selectImageInfoList" resultMap="ResultMap_ImageInfo">
+		SELECT
+			images.id,
+			images.title,
+			images.comment,
+			images.ownerId,
+			users.username,
+			images.thumbnail,
+			images.createdAt
+		FROM
+			images INNER JOIN users ON images.ownerId = users.id
+		ORDER BY
+			images.id DESC
+	</select>
+
+	<select id="selectImageInfoListWithLimit" resultMap="ResultMap_ImageInfo" parameterType="map">
+		SELECT
+			images.id,
+			images.title,
+			images.comment,
+			images.ownerId,
+			users.username,
+			images.thumbnail,
+			images.createdAt
+		FROM
+			images INNER JOIN users ON images.ownerId = users.id
+		ORDER BY
+			images.id DESC
+		LIMIT
+			#{limit} OFFSET #{offset}
+	</select>
+
+	<insert id="insertImageInfo" parameterType="ImageInfo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO images (
+			title,
+			comment,
+			ownerId,
+			thumbnail
+		)
+		VALUES (
+			#{title},
+			#{comment},
+			#{ownerId},
+			#{thumbnail}
+		)
+		<selectKey resultType="int" order="AFTER" keyProperty="id">
+			SELECT @@IDENTITY
+		</selectKey>
+	</insert>
+
+	<update id="updateImageInfo"  parameterType="ImageInfo">
+		UPDATE images set
+			title     = #{title},
+			comment   = #{comment},
+			ownerId   = #{owner},
+			thumbnai  = #{thumbnail}
+		WHERE
+			id = #{id}
+	</update>
+
+	<select id="selectImageData" resultMap="ResultMap_ImageData" parameterType="int">
+		SELECT
+			id,
+			mime,
+			width,
+			height,
+			filename,
+			data
+		FROM
+			images
+		WHERE
+			id = #{id}
+	</select>
+
+	<update id="updateImageData"  parameterType="ImageData">
+		UPDATE images set
+			mime      = #{mime},
+			width     = #{width},
+			height    = #{height},
+			filename  = #{filename},
+			data      = #{data}
+		WHERE
+			id = #{id}
+	</update>
+
+</mapper>

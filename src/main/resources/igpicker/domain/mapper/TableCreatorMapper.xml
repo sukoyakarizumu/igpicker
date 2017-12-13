@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="igpicker.domain.mapper.TableCreatorMapper">
+
+	<update id="createImages">
+		CREATE TABLE IF NOT EXISTS images (
+			id         INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+			title      VARCHAR(100),
+			comment    VARCHAR(2000),
+			ownerId    INT,
+			thumbnail  TEXT,
+			mime       VARCHAR(255),
+			width      INT,
+			height     INT,
+			filename   VARCHAR(260),
+			data       MEDIUMBLOB,
+			createdAt  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			updatedAt  TIMESTAMP NOT NULL
+		)
+		CHARSET=utf8 PARTITION BY KEY (id)
+	</update>
+
+	<update id="dropImages">
+		DROP TABLE IF EXISTS images
+	</update>
+
+	<update id="createUsers">
+		CREATE TABLE IF NOT EXISTS users (
+			id            INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+			username      VARCHAR(64) NOT NULL,
+			password      VARCHAR(64) NOT NULL,
+			administrator boolean
+		)
+		CHARSET=utf8 PARTITION BY KEY (id)
+	</update>
+
+	<update id="dropUsers">
+		DROP TABLE IF EXISTS users
+	</update>
+
+</mapper>
